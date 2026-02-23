@@ -1,0 +1,5 @@
+src/
+*.log
+*.tsbuildinfo
+node_modules/
+.github/

@@ -46,9 +46,7 @@ Recommended release order:
 
 This repository includes a workflow that publishes to npm when a GitHub Release is published.
 
-Required repository secret:
-
-- `NPM_TOKEN` (Automation token from npm)
+Recommended setup: npm Trusted Publishing (OIDC), no long-lived `NPM_TOKEN` required.
 
 Add local plugin path in your OpenCode config if testing without publish:
 

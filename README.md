@@ -34,6 +34,22 @@ npm install
 npm run build
 ```
 
+## Release flow
+
+Recommended release order:
+
+1. Bump version in `package.json`
+2. Commit and push `main`
+3. Create and push tag `vX.Y.Z`
+4. Publish GitHub Release for that tag
+5. GitHub Actions publishes to npm automatically
+
+This repository includes a workflow that publishes to npm when a GitHub Release is published.
+
+Required repository secret:
+
+- `NPM_TOKEN` (Automation token from npm)
+
 Add local plugin path in your OpenCode config if testing without publish:
 
 ```json

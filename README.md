@@ -39,7 +39,7 @@ Add local plugin path in your OpenCode config if testing without publish:
 ```json
 {
   "plugin": [
-    "file:///absolute/path/to/glm-clipboard-opencode/dist/index.js"
+    "file:///absolute/path/to/opencode-glm-clipboard/dist/index.js"
   ]
 }
 ```

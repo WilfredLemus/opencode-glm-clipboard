@@ -5,6 +5,7 @@ import { join } from "node:path"
 type MaybeFilePart = {
   type?: string
   url?: string
+  image?: string
   mediaType?: string
   filename?: string
   text?: string
@@ -89,10 +90,19 @@ export const GLMClipboardImagePlugin: Plugin = async () => {
       const nextParts = await Promise.all(
         output.parts.map(async (part) => {
           const maybePart = part as MaybeFilePart
-          if (!maybePart || typeof maybePart.url !== "string") return part
-          if (!maybePart.url.startsWith("data:")) return part
 
-          const parsed = parseDataUrl(maybePart.url)
+          // OpenCode pastes clipboard images as { type: "image", image: "data:..." }
+          // Some legacy parts may use { type: "file", url: "data:..." }
+          const dataUrl =
+            typeof maybePart.url === "string"
+              ? maybePart.url
+              : typeof maybePart.image === "string"
+                ? maybePart.image
+                : null
+          if (!dataUrl) return part
+          if (!dataUrl.startsWith("data:")) return part
+
+          const parsed = parseDataUrl(dataUrl)
           if (!parsed) return part
           if (!parsed.mimeType.startsWith("image/")) return part
 

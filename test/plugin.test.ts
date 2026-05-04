@@ -30,10 +30,9 @@ describe("GLMClipboardImagePlugin", () => {
     const output = createOutput([
       { type: "text", text: "read this" },
       {
-        type: "file",
-        mime: "image/png",
-        filename: "paste.png",
-        url: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wnq0JwAAAAASUVORK5CYII=",
+        type: "image",
+        image:
+          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wnq0JwAAAAASUVORK5CYII=",
       },
     ])
 
@@ -57,10 +56,9 @@ describe("GLMClipboardImagePlugin", () => {
 
     const output = createOutput([
       {
-        type: "file",
-        mime: "image/png",
-        filename: "paste.png",
-        url: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wnq0JwAAAAASUVORK5CYII=",
+        type: "image",
+        image:
+          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wnq0JwAAAAASUVORK5CYII=",
       },
     ])
 
@@ -80,10 +78,9 @@ describe("GLMClipboardImagePlugin", () => {
 
     const output = createOutput([
       {
-        type: "file",
-        mime: "image/png",
-        filename: "paste.png",
-        url: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wnq0JwAAAAASUVORK5CYII=",
+        type: "image",
+        image:
+          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wnq0JwAAAAASUVORK5CYII=",
       },
     ])
 
@@ -94,7 +91,7 @@ describe("GLMClipboardImagePlugin", () => {
     expect(transformed.text).toContain("A pasted image is available at this local path:")
   })
 
-  it("does not transform non-GLM models", async () => {
+  it("handles legacy parts with url field for backwards compatibility", async () => {
     const tempRoot = await mkdtemp(join(tmpdir(), "glm-clipboard-test-"))
     process.env.TMPDIR = tempRoot
 
@@ -110,11 +107,33 @@ describe("GLMClipboardImagePlugin", () => {
       },
     ])
 
+    await hook?.(createInput("glm-5") as never, output as never)
+
+    const transformed = output.parts[0] as { type: string; text?: string }
+    expect(transformed.type).toBe("text")
+    expect(transformed.text).toContain("A pasted image is available at this local path:")
+  })
+
+  it("does not transform non-GLM models", async () => {
+    const tempRoot = await mkdtemp(join(tmpdir(), "glm-clipboard-test-"))
+    process.env.TMPDIR = tempRoot
+
+    const plugin = await GLMClipboardImagePlugin({} as never)
+    const hook = plugin["chat.message"]
+
+    const output = createOutput([
+      {
+        type: "image",
+        image:
+          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wnq0JwAAAAASUVORK5CYII=",
+      },
+    ])
+
     await hook?.(createInput("gpt-5") as never, output as never)
 
-    const part = output.parts[0] as { type: string; url?: string }
-    expect(part.type).toBe("file")
-    expect(part.url?.startsWith("data:image/png")).toBe(true)
+    const part = output.parts[0] as { type: string; image?: string }
+    expect(part.type).toBe("image")
+    expect(part.image?.startsWith("data:image/png")).toBe(true)
   })
 
   it("cleans old temp files based on max age env var", async () => {
@@ -136,10 +155,9 @@ describe("GLMClipboardImagePlugin", () => {
 
     const output = createOutput([
       {
-        type: "file",
-        mime: "image/png",
-        filename: "paste.png",
-        url: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wnq0JwAAAAASUVORK5CYII=",
+        type: "image",
+        image:
+          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wnq0JwAAAAASUVORK5CYII=",
       },
     ])
 

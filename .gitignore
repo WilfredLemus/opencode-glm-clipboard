@@ -4,3 +4,4 @@ bun.lockb
 pnpm-lock.yaml
 npm-debug.log*
 .DS_Store
+.atl/

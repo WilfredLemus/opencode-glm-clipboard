@@ -4,9 +4,9 @@ import { join } from "node:path"
 import { describe, expect, it } from "vitest"
 import GLMClipboardImagePlugin from "../index"
 
-function createInput(modelID: string) {
+function createInput(modelID: string, providerID?: string) {
   return {
-    model: { modelID },
+    model: { modelID, providerID: providerID ?? "" },
   }
 }
 
@@ -46,6 +46,52 @@ describe("GLMClipboardImagePlugin", () => {
     const directory = join(tempRoot, "opencode-pasted-images")
     const files = await readdir(directory)
     expect(files.length).toBe(1)
+  })
+
+  it("transforms pasted image for CrofAI provider models", async () => {
+    const tempRoot = await mkdtemp(join(tmpdir(), "glm-clipboard-test-"))
+    process.env.TMPDIR = tempRoot
+
+    const plugin = await GLMClipboardImagePlugin({} as never)
+    const hook = plugin["chat.message"]
+
+    const output = createOutput([
+      {
+        type: "file",
+        mime: "image/png",
+        filename: "paste.png",
+        url: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wnq0JwAAAAASUVORK5CYII=",
+      },
+    ])
+
+    await hook?.(createInput("deepseek-v4-pro", "CrofAI") as never, output as never)
+
+    const transformed = output.parts[0] as { type: string; text?: string }
+    expect(transformed.type).toBe("text")
+    expect(transformed.text).toContain("A pasted image is available at this local path:")
+  })
+
+  it("transforms pasted image for zai-coding-plan provider models", async () => {
+    const tempRoot = await mkdtemp(join(tmpdir(), "glm-clipboard-test-"))
+    process.env.TMPDIR = tempRoot
+
+    const plugin = await GLMClipboardImagePlugin({} as never)
+    const hook = plugin["chat.message"]
+
+    const output = createOutput([
+      {
+        type: "file",
+        mime: "image/png",
+        filename: "paste.png",
+        url: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wnq0JwAAAAASUVORK5CYII=",
+      },
+    ])
+
+    await hook?.(createInput("claude-sonnet-4", "zai-coding-plan") as never, output as never)
+
+    const transformed = output.parts[0] as { type: string; text?: string }
+    expect(transformed.type).toBe("text")
+    expect(transformed.text).toContain("A pasted image is available at this local path:")
   })
 
   it("does not transform non-GLM models", async () => {

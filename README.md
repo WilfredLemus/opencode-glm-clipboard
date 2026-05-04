@@ -71,8 +71,11 @@ Temp directory used:
 
 ## Compatibility
 
-- Acts only on models with `modelID` starting with `glm-`
-- Leaves non-GLM models untouched
+- Acts on models from providers that don't declare native image input support:
+  - `CrofAI` provider (e.g. `deepseek-v4-pro`)
+  - `zai-coding-plan` provider (e.g. `claude-sonnet-4`)
+  - Legacy `glm-*` model IDs
+- Leaves other providers/models untouched
 
 ## License
 

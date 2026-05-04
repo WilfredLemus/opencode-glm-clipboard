@@ -74,8 +74,14 @@ export const GLMClipboardImagePlugin: Plugin = async () => {
 
   return {
     "chat.message": async (input, output) => {
+      const providerID = input.model?.providerID ?? ""
       const modelID = output.message.model?.modelID ?? input.model?.modelID ?? ""
-      if (!modelID.startsWith("glm-")) return
+      if (
+        providerID !== "CrofAI" &&
+        providerID !== "zai-coding-plan" &&
+        !modelID.startsWith("glm-")
+      )
+        return
 
       await mkdir(saveDir, { recursive: true })
       await cleanupOldTempImages(saveDir, maxAgeMs)

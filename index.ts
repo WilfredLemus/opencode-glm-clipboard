@@ -191,7 +191,13 @@ export const GLMClipboardImagePlugin: Plugin = async () => {
           const filePath = join(saveDir, `paste-${ts}-${rand}.${ext}`)
           await writeFile(filePath, parsed.bytes)
 
-          return { ...p, type: "text" as const, text: `📷 Image: ${filePath}` }
+          return {
+            ...p,
+            type: "text" as const,
+            text: `📷 The user pasted an image. Saved to: ${filePath}. ` +
+              `Use the available screenshot/OCR MCP tool to read it and answer. ` +
+              `Do NOT say you cannot see images — just use the tool.`,
+          }
         }),
       )
 

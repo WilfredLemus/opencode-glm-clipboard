@@ -41,7 +41,9 @@ describe("GLMClipboardImagePlugin", () => {
 
     const transformed = output.parts[1] as { type: string; text?: string }
     expect(transformed.type).toBe("text")
-    expect(transformed.text).toMatch(/^📷 Image: .+\.png$/)
+    expect(transformed.text).toContain("Saved to:")
+    expect(transformed.text).toContain("Use the available screenshot/OCR MCP tool")
+    expect(transformed.text).not.toContain("A pasted image is available")
 
     const files = await readdir(join(tempRoot, "opencode-pasted-images"))
     expect(files.length).toBe(1)
@@ -58,7 +60,9 @@ describe("GLMClipboardImagePlugin", () => {
 
     const transformed = output.parts[0] as { type: string; text?: string }
     expect(transformed.type).toBe("text")
-    expect(transformed.text).toMatch(/^📷 Image: .+\.png$/)
+    expect(transformed.text).toContain("Saved to:")
+    expect(transformed.text).toContain("Use the available screenshot/OCR MCP tool")
+    expect(transformed.text).not.toContain("A pasted image is available")
   })
 
   it("converts pasted image for zai-coding-plan text-only models", async () => {
@@ -72,7 +76,9 @@ describe("GLMClipboardImagePlugin", () => {
 
     const transformed = output.parts[0] as { type: string; text?: string }
     expect(transformed.type).toBe("text")
-    expect(transformed.text).toMatch(/^📷 Image: .+\.png$/)
+    expect(transformed.text).toContain("Saved to:")
+    expect(transformed.text).toContain("Use the available screenshot/OCR MCP tool")
+    expect(transformed.text).not.toContain("A pasted image is available")
   })
 
   // -------------------------------------------------------------------------
@@ -141,7 +147,9 @@ describe("GLMClipboardImagePlugin", () => {
 
     const transformed = output.parts[0] as { type: string; text?: string }
     expect(transformed.type).toBe("text")
-    expect(transformed.text).toMatch(/^📷 Image: .+\.png$/)
+    expect(transformed.text).toContain("Saved to:")
+    expect(transformed.text).toContain("Use the available screenshot/OCR MCP tool")
+    expect(transformed.text).not.toContain("A pasted image is available")
   })
 
   // -------------------------------------------------------------------------

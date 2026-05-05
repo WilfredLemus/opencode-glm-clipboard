@@ -3,6 +3,8 @@ import { mkdir, readdir, readFile, stat, unlink, writeFile } from "node:fs/promi
 import { existsSync } from "node:fs"
 import { join } from "node:path"
 
+import { homedir } from "node:os"
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -43,11 +45,22 @@ const IMAGE_CAPABLE = new Set([
 const TEXT_ONLY_PROVIDERS = new Set(["CrofAI", "zai-coding-plan"])
 
 // ---------------------------------------------------------------------------
+// Base Paths
+// ---------------------------------------------------------------------------
+
+function getOpenCodeCacheDir(): string {
+  if (process.env.OPENCODE_GLM_CLIPBOARD_TEST_DIR) {
+    return process.env.OPENCODE_GLM_CLIPBOARD_TEST_DIR
+  }
+  return join(homedir(), ".cache", "opencode")
+}
+
+// ---------------------------------------------------------------------------
 // models.dev cache
 // ---------------------------------------------------------------------------
 
 function cacheDir(): string {
-  return join(process.env.TMPDIR || "/tmp", "opencode-glm-clipboard")
+  return join(getOpenCodeCacheDir(), "glm-clipboard")
 }
 
 function cachePath(): string {
@@ -136,8 +149,7 @@ async function cleanupTempFiles(saveDir: string, maxAgeMs: number, now = Date.no
 // ---------------------------------------------------------------------------
 
 export const GLMClipboardImagePlugin: Plugin = async () => {
-  const tmpRoot = process.env.TMPDIR || "/tmp"
-  const saveDir = join(tmpRoot, "opencode-pasted-images")
+  const saveDir = join(getOpenCodeCacheDir(), "pasted-images")
   const maxAgeMs = cleanupMaxAgeMs()
 
   // In-memory cache for the session — populated lazily

@@ -23,7 +23,7 @@ describe("GLMClipboardImagePlugin", () => {
 
   beforeEach(async () => {
     tempRoot = await mkdtemp(join(tmpdir(), "glm-clipboard-test-"))
-    process.env.TMPDIR = tempRoot
+    process.env.OPENCODE_GLM_CLIPBOARD_TEST_DIR = tempRoot
   })
 
   // -------------------------------------------------------------------------
@@ -44,7 +44,7 @@ describe("GLMClipboardImagePlugin", () => {
     expect(transformed.text).toMatch(/ — OCR$/)
     expect(transformed.text).not.toContain("A pasted image is available")
 
-    const files = await readdir(join(tempRoot, "opencode-pasted-images"))
+    const files = await readdir(join(tempRoot, "pasted-images"))
     expect(files.length).toBe(1)
   })
 
@@ -155,7 +155,7 @@ describe("GLMClipboardImagePlugin", () => {
   it("cleans old temp files based on max age env var", async () => {
     process.env.OPENCODE_GLM_CLIPBOARD_MAX_AGE_HOURS = "0.0001"
 
-    const saveDir = join(tempRoot, "opencode-pasted-images")
+    const saveDir = join(tempRoot, "pasted-images")
     await mkdir(saveDir, { recursive: true })
     await writeFile(join(saveDir, "placeholder"), "", { flag: "a" })
 

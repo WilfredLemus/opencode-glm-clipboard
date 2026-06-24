@@ -1,6 +1,6 @@
 {
   "name": "opencode-glm-clipboard",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "description": "OpenCode plugin that converts pasted clipboard data URLs to temp files for GLM models",
   "repository": {
     "type": "git",
@@ -46,11 +46,7 @@
   "devDependencies": {
     "@opencode-ai/plugin": "^1.0.150",
     "@types/node": "^24.6.2",
-    "jsonc-parser": "^3.3.1",
     "typescript": "^5.9.3",
     "vitest": "^3.2.4"
-  },
-  "dependencies": {
-    "jsonc-parser": "^3.3.1"
   }
 }
